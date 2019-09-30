@@ -1,21 +1,24 @@
 # '''
 # Linked List hash table key/value pair
 # '''
+
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
+
 class HashTable:
     '''
     A hash table that with `capacity` buckets
     that accepts string keys
     '''
+
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
-
 
     def _hash(self, key):
         '''
@@ -25,7 +28,6 @@ class HashTable:
         '''
         return hash(key)
 
-
     def _hash_djb2(self, key):
         '''
         Hash an arbitrary key using DJB2 hash
@@ -34,14 +36,12 @@ class HashTable:
         '''
         pass
 
-
     def _hash_mod(self, key):
         '''
         Take an arbitrary key and return a valid integer index
         within the storage capacity of the hash table.
         '''
         return self._hash(key) % self.capacity
-
 
     def insert(self, key, value):
         '''
@@ -51,9 +51,21 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
-
+        # pass
+        index = self._hash_mod(key)
+        print(index)
+        current_pair = self.storage[index]
+        print(current_pair)
+        last_pair = None
+        while current_pair is not None and current_pair.key != key:
+            last_pair = current_pair
+            current_pair = last_pair.next
+        if current_pair is not None:
+            current_pair.value = value
+        else:
+            new_pair = LinkedPair(key, value)
+            new_pair.next = self.storage[index]
+            self.storage[index] = new_pair
 
     def remove(self, key):
         '''
@@ -63,8 +75,20 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # pass
+        index = self._hash_mod(key)
+        current_pair = self.storage[index]
+        last_pair = None
+        while current_pair is not None and current_pair.key != key:
+            last_pair = current_pair
+            current_pair = last_pair.next
+        if current_pair is None:
+            print("Error: Unable to remove entry with key" + key)
+        else:
+            if last_pair is None:
+                self.storage[index] = current_pair.next
+            else:
+                last_pair.next = current_pair.next
 
     def retrieve(self, key):
         '''
@@ -74,8 +98,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # pass
+        index = self._hash_mod(key)
+        current_pair = self.storage[index]
+        while current_pair is not None:
+            if current_pair.key == key:
+                return current_pair.value
+            current_pair = current_pair.next
 
     def resize(self):
         '''
@@ -84,8 +113,16 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # pass
+        old_storage = self.storage
+        self.capacity = 2 * self.capacity
+        self.storage = [None] * self.capacity
+        current_pair = None
+        for bucket_item in old_storage:
+            current_pair = bucket_item
+            while current_pair is not None:
+                self.insert(current_pair.key, current_pair.value)
+                current_pair = current_pair.next
 
 
 if __name__ == "__main__":
